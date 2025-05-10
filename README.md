@@ -1,93 +1,55 @@
-🎥 Deepfake Detection Pipeline Using Hybrid Deep Learning
-This repository contains a complete pipeline for detecting deepfakes using a hybrid ensemble model combining Xception, CNN+LSTM, and Vision Transformer (ViT). It includes GPU checks, video face extraction, preprocessing, labeling, training, and testing with visualization support.
+# Deepfake Detection Using Hybrid Deep Learning Techniques 🎥🧠
 
-📁 Project Files
-gpu_test.py: Checks GPU availability on your system.
+A robust, modular pipeline for detecting deepfake content in videos using a hybrid ensemble of deep learning models: **Xception**, **CNN + LSTM**, and **Vision Transformer (ViT)**. This project includes GPU support, automated face extraction, preprocessing, labeling, model training, and video analysis.
 
-image_crop.py: Extracts and crops faces from videos using RetinaFace.
+---
 
-preProcess.py: Preprocesses cropped face images (resizing, RGB conversion).
+## 📌 Features
 
-labelling.py: Labels images based on metadata.json.
+- 🔍 Automated face detection from videos using RetinaFace
+- 🧼 Image preprocessing pipeline (resize, normalization, RGB)
+- 🏷️ Label generation using metadata
+- 🧠 Hybrid model architecture combining spatial, temporal, and patch-based features
+- 📊 Visualization of predictions, confidence, and frame-level analysis
+- 🛠️ End-to-end training and testing modules with multiprocessing support
 
-train.py: Trains a hybrid deep learning model (Xception + CNN+LSTM + ViT).
+---
 
-test.py: Analyzes videos using the trained model and shows results.
+## 🚀 Quick Start
 
-📦 Requirements
-Install all required packages using pip:
-
-bash
-Copy
-Edit
-pip install tensorflow opencv-python pandas tqdm seaborn pillow retina-face tensorflow-addons
-📂 Expected Dataset Structure
-graphql
-Copy
-Edit
+### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/deepfake-hybrid-detection.git
+cd deepfake-hybrid-detection
+```
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 3. Prepare Dataset
+Organize your dataset as follows:
+```bash
 deepdata/
-├── train_sample_videos/         # Training videos
-├── test_videos/                 # Test videos
-├── cropped_faces/               # Auto-generated: face crops
-├── preprocessed_faces/          # Auto-generated: resized RGB faces
+├── train_sample_videos/
+├── test_videos/
 ├── metadeta/
-│   └── metadata.json            # Metadata with labels
-├── output_preprocessed/
-│   └── face_labels.csv          # Auto-generated labels for images
-└── saved_models/
-    └── deepfake_ensemble_model.h5  # Trained model file
-Make sure the paths in the Python scripts match your folder structure.
+│   └── metadata.json
 
-🚀 How to Use
-1. ✅ Check GPU Availability
-bash
-Copy
-Edit
-python gpu_test.py
-2. 🎞️ Extract Faces from Videos
-bash
-Copy
-Edit
-python image_crop.py
-3. 🧼 Preprocess Cropped Faces
-bash
-Copy
-Edit
-python preProcess.py
-4. 🏷️ Label the Images
-bash
-Copy
-Edit
-python labelling.py
-5. 🧠 Train the Model
-bash
-Copy
-Edit
-python train.py
-6. 🔍 Test Videos
-bash
-Copy
-Edit
-python test.py
-🧠 Model Architecture
-This project uses an ensemble deep learning model that combines:
+```
+### 4. Module Overview 
+| File            | Description                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `gpu_test.py`   | Verifies if TensorFlow can access a GPU                         |
+| `image_crop.py` | Extracts faces from video frames using RetinaFace               |
+| `preProcess.py` | Preprocesses cropped faces (resizing, RGB, normalization)       |
+| `labelling.py`  | Generates labels (REAL/FAKE) from `metadata.json`               |
+| `train.py`      | Trains a hybrid deep learning model (Xception + CNN+LSTM + ViT) |
+| `test.py`       | Analyzes test videos and visualizes results                     |
 
-Xception (pretrained on ImageNet)
-
-CNN + LSTM (for spatio-temporal feature extraction)
-
-Vision Transformer (ViT) (for patch-based learning)
-
-All feature branches are fused using a custom attention mechanism, followed by a dense classification head. The model is trained using Weighted Focal Loss to handle class imbalance.
-
-📊 Output
-Frame-level prediction plots
-
-Temporal consistency analysis
-
-Final classification: Deepfake, Authentic, or Uncertain
-
-Confidence-based visualization
-
-Confusion matrix and ROC curve
-
+### 5. Model Architecture
+The ensemble model consists of:
+Xception:Pretrained on ImageNet for deep spatial features.
+CNN + LSTM: Extracts spatial and short-term temporal features.
+ViT (Vision Transformer): Captures long-range dependencies via image patches.
+Feature Fusion: Attention-based mechanism combining all branches.
+Loss Function: Custom Weighted Focal Loss for handling class imbalance.
