@@ -1,143 +1,93 @@
-# 🎥 Deepfake Detection Pipeline Using Hybrid Deep Learning
+🎥 Deepfake Detection Pipeline Using Hybrid Deep Learning
+This repository contains a complete pipeline for detecting deepfakes using a hybrid ensemble model combining Xception, CNN+LSTM, and Vision Transformer (ViT). It includes GPU checks, video face extraction, preprocessing, labeling, training, and testing with visualization support.
 
-This repository contains a complete pipeline for detecting deepfakes using a hybrid ensemble model combining Xception, CNN+LSTM, and Vision Transformer (ViT). The pipeline handles video frame extraction, image preprocessing, labeling, training, and deepfake analysis with visualization support.
+📁 Project Files
+gpu_test.py: Checks GPU availability on your system.
 
----
+image_crop.py: Extracts and crops faces from videos using RetinaFace.
 
-## 📁 Project Structure
+preProcess.py: Preprocesses cropped face images (resizing, RGB conversion).
 
-.
-├── gpu_test.py # Detects GPU availability
-├── image_crop.py # Extracts faces from videos using RetinaFace
-├── preProcess.py # Preprocesses extracted faces (resize, RGB)
-├── labelling.py # Labels preprocessed images using metadata.json
-├── train.py # Trains hybrid deep learning model (CNN+LSTM+ViT)
-├── test.py # Analyzes videos using trained model
+labelling.py: Labels images based on metadata.json.
 
-yaml
+train.py: Trains a hybrid deep learning model (Xception + CNN+LSTM + ViT).
+
+test.py: Analyzes videos using the trained model and shows results.
+
+📦 Requirements
+Install all required packages using pip:
+
+bash
 Copy
 Edit
-
----
-
-## 📦 Requirements
-
-Install all required dependencies:
-
-```bash
 pip install tensorflow opencv-python pandas tqdm seaborn pillow retina-face tensorflow-addons
-Also required:
+📂 Expected Dataset Structure
+graphql
+Copy
+Edit
+deepdata/
+├── train_sample_videos/         # Training videos
+├── test_videos/                 # Test videos
+├── cropped_faces/               # Auto-generated: face crops
+├── preprocessed_faces/          # Auto-generated: resized RGB faces
+├── metadeta/
+│   └── metadata.json            # Metadata with labels
+├── output_preprocessed/
+│   └── face_labels.csv          # Auto-generated labels for images
+└── saved_models/
+    └── deepfake_ensemble_model.h5  # Trained model file
+Make sure the paths in the Python scripts match your folder structure.
 
-CUDA-compatible GPU (recommended)
-
-RetinaFace pre-installed
-
-Folder structure as described below
-
-🚀 Pipeline Steps
-1. ✅ GPU Check
-Check if your machine has a compatible GPU:
-
+🚀 How to Use
+1. ✅ Check GPU Availability
 bash
 Copy
 Edit
 python gpu_test.py
-2. 🎞️ Face Extraction
-Extracts faces from video frames using RetinaFace and saves them:
-
+2. 🎞️ Extract Faces from Videos
 bash
 Copy
 Edit
 python image_crop.py
-Customize video_dir, cropped_faces_dir, etc., inside the script.
-
-3. 🧼 Image Preprocessing
-Converts cropped face images to 128x128 RGB format:
-
+3. 🧼 Preprocess Cropped Faces
 bash
 Copy
 Edit
 python preProcess.py
-4. 🏷️ Label Images
-Reads metadata.json and labels images (FAKE = 1, REAL = 0):
-
+4. 🏷️ Label the Images
 bash
 Copy
 Edit
 python labelling.py
 5. 🧠 Train the Model
-Trains a hybrid deep learning model using:
-
-Xception (pretrained on ImageNet)
-
-CNN + LSTM
-
-Vision Transformer (ViT)
-
-Feature fusion with attention mechanism
-
-Weighted focal loss for class imbalance
-
 bash
 Copy
 Edit
 python train.py
-Outputs:
-
-deepfake_ensemble_model.h5
-
-Training metrics, ROC curve, confusion matrix
-
-6. 🔬 Test and Analyze Videos
-Analyzes new videos for deepfake classification using trained model:
-
+6. 🔍 Test Videos
 bash
 Copy
 Edit
 python test.py
-Displays:
-
-Frame-by-frame probability scores
-
-Temporal consistency
-
-Final classification (Authentic, Deepfake, Uncertain)
-
-Confidence visualization
-
 🧠 Model Architecture
-🔗 Hybrid Model: Combines Xception, CNN-LSTM, and Vision Transformer
+This project uses an ensemble deep learning model that combines:
 
-🎯 Loss Function: Weighted Focal Loss
+Xception (pretrained on ImageNet)
 
-📉 Optimizer: Adam with learning rate scheduling
+CNN + LSTM (for spatio-temporal feature extraction)
 
-🧮 Metrics: Accuracy, AUC, Precision, Recall
+Vision Transformer (ViT) (for patch-based learning)
 
-📂 Expected Dataset Structure
-markdown
-Copy
-Edit
-deepdata/
-├── train_sample_videos/
-├── test_videos/
-├── cropped_faces/
-├── preprocessed_faces/
-├── metadeta/
-│   └── metadata.json
-├── output_preprocessed/
-│   └── face_labels.csv
-└── saved_models/
-    └── deepfake_ensemble_model.h5
-Make sure paths inside each script are updated to match your local directory.
+All feature branches are fused using a custom attention mechanism, followed by a dense classification head. The model is trained using Weighted Focal Loss to handle class imbalance.
 
-📊 Visualization
-The pipeline provides:
+📊 Output
+Frame-level prediction plots
 
-📈 Training accuracy & loss plots
+Temporal consistency analysis
 
-📉 ROC curves
+Final classification: Deepfake, Authentic, or Uncertain
 
-🧩 Confusion matrix
+Confidence-based visualization
 
-📹 Frame-wise prediction plots with moving average and peak detection
+Confusion matrix and ROC curve
+
