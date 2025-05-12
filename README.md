@@ -29,19 +29,20 @@ A robust, modular pipeline for detecting deepfake content in videos using a hybr
  📂 Repository Structure
 
 ├── deepdata/ ← Your raw data & outputs
-│ ├── train_sample_videos/
-│ ├── test_videos/
-│ └── metadeta/metadata.json
+│ ├── train_sample_videos/ ← Unzipped training samples
+│ ├── test_videos/ ← Unzipped validation videos
+│ └── metadata/
+│ └── metadata.json ← Labels for training videos
 │
 ├── preprocess.py ← Image resizing & RGB conversion
-├── imagecrop.py ← Frame‐wise face extraction (RetinaFace)
-├── labelling.py ← Builds face‐label CSV from metadata
+├── imagecrop.py ← Frame-wise face extraction (RetinaFace)
+├── labelling.py ← Builds face-label CSV from metadata
 ├── train.py ← Trains Xception + CNN+LSTM + ViT ensemble
 ├── test.py ← Runs inference, frame analysis & plots
 ├── gpu_test.py ← Checks for GPU availability
 ├── requirements.txt ← All Python dependencies
 │
-
+└── deepfake_app/ ← Streamlit deployment folder
 ├── outputs/
 │ └── deepfake_ensemble_model.h5
 ├── app.py ← Main Streamlit application
