@@ -19,8 +19,8 @@ A robust, modular pipeline for detecting deepfake content in videos using a hybr
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/deepfake-hybrid-detection.git
-cd deepfake-hybrid-detection
+git clone https://github.com/your-username/deepfake.git
+cd deepfake
 ```
 ### 2. Install Dependencies
 ```bash
