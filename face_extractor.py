@@ -1,26 +1,28 @@
 import cv2
-import numpy as np
-from retinaface import RetinaFace
+import imageio.v3 as iio
+from mtcnn import MTCNN
 
-
-def extract_faces_from_video(video_path):
-    # Initialize the video capture
-    video_capture = cv2.VideoCapture(video_path)
-
+def extract_faces_from_video(video_path, target_size=(160, 160)):
+    """Extract faces using MTCNN detector"""
+    detector = MTCNN()
     faces = []
-    while True:
-        ret, frame = video_capture.read()
-        if not ret:
-            break
-
-        # Extract faces using RetinaFace
-        detected_faces = RetinaFace.detect_faces(frame)
-
-        # If faces are detected, crop and append them
-        for _, face in detected_faces.items():
-            x1, y1, x2, y2 = face['facial_area']
-            face_image = frame[y1:y2, x1:x2]
-            faces.append(face_image)
-
-    video_capture.release()
+    
+    try:
+        for frame in iio.imiter(video_path):
+            # Convert frame to RGB
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            
+            # Detect faces
+            detections = detector.detect_faces(rgb_frame)
+            
+            for detection in detections:
+                x, y, w, h = detection['box']
+                face = rgb_frame[y:y+h, x:x+w]
+                if face.size > 0:
+                    resized_face = cv2.resize(face, target_size)
+                    faces.append(resized_face)
+                    
+    except Exception as e:
+        print(f"Face extraction error: {str(e)}")
+        
     return faces
