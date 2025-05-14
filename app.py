@@ -1,21 +1,20 @@
 import streamlit as st
 import os
-import cv2
 import numpy as np
 import pandas as pd
 import plotly.express as px
+import imageio.v3 as iio
+import cv2
 from face_extractor import extract_faces_from_video
 from predictor import predict_fake_or_real
-
 
 # ---------------------------
 # 1. SETUP DIRECTORIES
 # ---------------------------
 def setup_directories():
     """Create necessary directories if they don't exist"""
-    for directory in ['uploads', 'outputs', 'temp_frames']:
+    for directory in ['uploads', 'output', 'temp_frames']:
         os.makedirs(directory, exist_ok=True)
-
 
 setup_directories()
 
@@ -29,26 +28,27 @@ st.markdown("""
     Supported formats: MP4, MOV, AVI (max 5 minutes)
 """)
 
-
 # ---------------------------
 # 3. VIDEO PROCESSING & ANALYSIS
 # ---------------------------
 def display_video_metadata(video_path: str):
     """Display essential video information"""
-    cap = cv2.VideoCapture(video_path)
-    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    duration = frame_count / fps if fps > 0 else 0
-    cap.release()
-
-    metadata = {
-        "Resolution": f"{int(cap.get(3))}x{int(cap.get(4))}",
-        "Duration": f"{duration:.2f} seconds",
-        "Frame Rate": f"{fps:.2f} FPS"
-    }
+    try:
+        # Get video metadata using imageio
+        reader = iio.imopen(video_path, "r")
+        metadata = reader.metadata()
+        
+        video_info = {
+            "Resolution": f"{metadata['shape'][1]}x{metadata['shape'][0]}",
+            "Duration": f"{reader.properties().duration:.2f} seconds",
+            "Frame Rate": f"{metadata['fps']:.2f} FPS"
+        }
+        reader.close()
+    except Exception as e:
+        video_info = {"Error": str(e)}
+    
     st.sidebar.subheader("Video Metadata")
-    st.sidebar.json(metadata)
-
+    st.sidebar.json(video_info)
 
 def analyze_video(uploaded_file):
     """Main video analysis pipeline"""
@@ -67,18 +67,17 @@ def analyze_video(uploaded_file):
         # Extract faces
         with st.expander("Face Extraction Progress"):
             faces = extract_faces_from_video(temp_video_path)
-            st.success(f"Extracted {len(faces)} face frames")
+            if faces:
+                st.success(f"Extracted {len(faces)} face frames")
+            else:
+                st.warning("No faces detected in the video")
+                return
 
-        if not faces:
-            st.warning("No faces detected in the video")
-            return
-
-        # Make predictions with error handling
+        # Make predictions
         try:
             with st.spinner("Analyzing facial features..."):
                 predictions, confidence_scores = predict_fake_or_real(faces)
 
-            # Critical null check added here
             if not predictions or not confidence_scores:
                 st.error("Analysis failed: Could not process facial features")
                 return
@@ -122,7 +121,6 @@ def analyze_video(uploaded_file):
     finally:
         if os.path.exists(temp_video_path):
             os.remove(temp_video_path)
-
 
 # ---------------------------
 # 4. MAIN APP FLOW
